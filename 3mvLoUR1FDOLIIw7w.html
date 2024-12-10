@@ -1,0 +1,976 @@
+<html><head><base href="." /><title>TaskMaster Pro - Productividad Personal</title><script src="https://unpkg.com/react@17/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script><script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+  --text-primary: #1F2937;
+  --text-secondary: #4B5563;
+  --background-primary: #FFFFFF;
+  --background-secondary: #F3F4F6;
+  --border-color: #E5E7EB;
+  --button-bg: #3B82F6;
+  --button-text: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --input-bg: #F3F4F6;
+}
+
+.dark {
+  --text-primary: #F9FAFB;
+  --text-secondary: #E5E7EB; 
+  --background-primary: #111827;
+  --background-secondary: #1F2937;
+  --border-color: #374151;
+  --button-bg: #3B82F6;
+  --button-text: #FFFFFF;
+  --card-bg: #1F2937;
+  --input-bg: #374151;
+}
+
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background-color: var(--background-primary);
+}
+
+.dark body {
+  background-color: var(--background-primary) !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-white {
+  background-color: var(--background-primary) !important;
+}
+
+.dark .fixed {
+  background-color: var(--background-primary);
+}
+
+#app {
+  background-color: var(--background-primary);
+  min-height: 100vh;
+}
+
+.task-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+input[type="text"],
+input[type="range"],
+select,
+textarea {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+}
+
+.task-item {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.avatar-container {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.achievement-unlock {
+  animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.task-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.task-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.mindfulness-bubble {
+  @apply bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4 transform transition-transform hover:scale-102;
+}
+
+.task-complete {
+  animation: complete-task 0.5s ease-out;
+}
+
+@keyframes complete-task {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.category-header {
+  color: white !important;
+}
+
+.task-list-item {
+  color: var(--text-primary);
+  background-color: var(--background-secondary);
+  @apply flex items-center p-3 rounded-lg transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 mb-2 text-gray-900 dark:text-gray-100;
+}
+
+.dark .task-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark .analytics-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark canvas {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.dark .task-list-item {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+}
+
+.dark .task-list-item:hover {
+  background-color: #374151;
+}
+
+.dark .timer-text {
+  color: var(--text-primary) !important;
+}
+
+.dark input[type="text"],
+.dark input[type="range"],
+.dark select,
+.dark textarea {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+}
+
+.dark .progress-ring circle {
+  stroke: var(--text-primary);
+}
+
+.dark .mindfulness-bubble {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark .settings-menu {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark .achievement-unlock {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6,
+.dark p, 
+.dark span, 
+.dark label {
+  color: var(--text-primary);
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: var(--text-secondary);
+}
+
+.analytics-card {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.progress-bg {
+  background-color: var(--background-secondary);
+}
+
+.achievement-popup {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--button-bg);
+}
+
+.settings-menu {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.achievement-unlock {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+</style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+<div id="app"></div>
+
+<script type="text/babel">
+function TaskForm({ category, onSubmit, onClose }) {
+  const [title, setTitle] = React.useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (title.trim()) {
+      onSubmit({
+        title: title.trim(),
+        category
+      });
+      setTitle('');
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <h3 className="text-xl font-bold mb-4">Nueva Tarea</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              Título de la tarea
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              required
+            />
+          </div>
+          <div className="flex space-x-2">
+            <button
+              type="submit"
+              className="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+            >
+              Guardar
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+const DEFAULT_USER_STATE = {
+  tasks: [],
+  streak: 0,
+  coins: 0,
+  achievements: [],
+  theme: 'light',
+  tutorialCompleted: false
+};
+
+const MOTIVATION_MESSAGES = [
+  "¡Excelente trabajo! 🎉",
+  "¡Sigue así! 💪",
+  "¡Vas por buen camino! ⭐",
+  "¡Increíble progreso! 🌟",
+  "¡Un paso más hacia tus metas! 🎯",
+  "¡Genial! Mantén el ritmo 🚀",
+  "¡Has dominado esta tarea! 👑",
+  "¡Nada puede detenerte! 💫",
+  "¡Superándote cada día! 🌈",
+  "¡Victoria conseguida! 🏆"
+];
+
+const ACHIEVEMENTS = {
+  STREAK_7: {
+    id: 'streak_7',
+    title: '¡Racha de 7 días!',
+    description: 'Has mantenido una racha de productividad por 7 días',
+    icon: '🏆'
+  },
+  TASKS_10: {
+    id: 'tasks_10', 
+    title: '¡10 tareas completadas!',
+    description: 'Has completado 10 tareas',
+    icon: '⭐'
+  },
+  MASTER: {
+    id: 'productivity_master',
+    title: 'Maestro de la productividad',
+    description: 'Has completado todas las tareas del día',
+    icon: '👑'
+  }
+};
+
+function Analytics({ tasks, taskCategories }) {
+  const completedTasks = tasks.filter(task => task.completed);
+  const totalTasks = tasks.length;
+  const completionRate = totalTasks ? (completedTasks.length / totalTasks * 100).toFixed(1) : 0;
+
+  const chartRef = React.useRef(null); // Add chart reference
+
+  const tasksByCategory = taskCategories.map(category => ({
+    name: category.name,
+    count: tasks.filter(task => task.category === category.id).length,
+    completed: tasks.filter(task => task.category === category.id && task.completed).length
+  }));
+
+  React.useEffect(() => {
+    const ctx = document.getElementById('completionChart');
+    
+    // Destroy existing chart if it exists
+    if (chartRef.current) {
+      chartRef.current.destroy();
+    }
+
+    // Create new chart instance
+    if (ctx) {
+      chartRef.current = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Completadas', 'Pendientes'],
+          datasets: [{
+            data: [completedTasks.length, totalTasks - completedTasks.length],
+            backgroundColor: ['#10B981', '#E5E7EB'],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'var(--text-primary)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Cleanup function to destroy chart when component unmounts
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, [completedTasks.length, totalTasks]);
+
+  return (
+    <div className="mt-8">
+      <h2 className="text-2xl font-bold mb-4">Análisis de Productividad</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="analytics-card p-6 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Progreso General</h3>
+          <div className="flex flex-col items-center">
+            <canvas id="completionChart" width="200" height="200"></canvas>
+            <p className="mt-4 text-lg">
+              Tasa de completado: {completionRate}%
+            </p>
+          </div>
+        </div>
+
+        <div className="analytics-card p-6 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Desglose por Categoría</h3>
+          <div className="space-y-4">
+            {tasksByCategory.map(category => (
+              <div key={category.name}>
+                <div className="flex justify-between mb-1">
+                  <span>{category.name}</span>
+                  <span>{category.completed}/{category.count}</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                  <div 
+                    className="bg-primary h-2.5 rounded-full"
+                    style={{
+                      width: `${category.count ? (category.completed / category.count * 100) : 0}%`
+                    }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UserAuth({ onLogin }) {
+  const [username, setUsername] = React.useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (username.trim()) {
+      onLogin(username.trim());
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-md w-full p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold mb-4 text-center">TaskMaster Pro</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function UserSettings({ currentUser, onReset, onLogout, onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <h3 className="text-xl font-bold mb-4">Ajustes de Usuario</h3>
+        <p className="mb-4">Usuario actual: {currentUser}</p>
+        <div className="space-y-4">
+          <button
+            onClick={onReset}
+            className="w-full py-2 bg-red-500 text-white rounded-lg hover:bg-opacity-90"
+          >
+            Borrar Progreso
+          </button>
+          <button
+            onClick={onLogout}
+            className="w-full py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Cerrar Sesión
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TaskList({ category, tasks, onTaskComplete, taskCategories }) {
+  const categoryInfo = taskCategories.find(c => c.id === category);
+  
+  return (
+    <div>
+      <div className={`bg-gradient-to-r ${categoryInfo.color} p-4 rounded-t-lg`}>
+        <h2 className="text-xl font-bold flex items-center category-header">
+          <span className="mr-2">{categoryInfo.icon}</span>
+          {categoryInfo.name}
+        </h2>
+        <p className="text-sm text-white mt-1">{categoryInfo.description}</p>
+      </div>
+      
+      <div className="mt-4">
+        {tasks.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+            No hay tareas en esta categoría
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {tasks.map(task => (
+              <li 
+                key={task.id}
+                className={`task-list-item ${task.completed ? 'completed' : ''}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => onTaskComplete(task.id)}
+                  className="mr-3"
+                  disabled={task.completed}
+                />
+                <span className={task.completed ? 'line-through' : ''}>
+                  {task.title}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MindfulnessPrompt({ onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <h3 className="text-xl font-bold mb-4">Momento de Mindfulness</h3>
+        <p className="mb-4">
+          Toma un momento para respirar profundamente y reflexionar sobre tu progreso.
+        </p>
+        <button
+          onClick={onClose}
+          className="w-full py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Timer({ time, isRunning, onToggle, onReset }) {
+  const [customTime, setCustomTime] = React.useState(25);
+  
+  const handleTimeChange = (e) => {
+    const newTime = Number(e.target.value);
+    setCustomTime(newTime);
+    onReset(newTime * 60);
+  };
+
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  const progress = (time / (25 * 60)) * 100;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative w-48 h-48">
+        <svg className="progress-ring" width="100%" height="100%">
+          <circle
+            className="text-gray-200 dark:text-gray-700"
+            strokeWidth="8"
+            stroke="currentColor"
+            fill="transparent"
+            r="70"
+            cx="96"
+            cy="96"
+          />
+          <circle
+            className="text-primary transition-all duration-300"
+            strokeWidth="8"
+            stroke="currentColor"
+            fill="transparent"
+            r="70"
+            cx="96"
+            cy="96"
+            strokeDasharray={`${440 * (progress / 100)} 440`}
+          />
+        </svg>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <span className="text-4xl font-bold dark:text-white timer-text">
+            {`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}
+          </span>
+        </div>
+      </div>
+      <div className="mt-4 space-x-2">
+        <button
+          onClick={onToggle}
+          className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-opacity-90 transition-colors"
+        >
+          {isRunning ? 'Pausar' : 'Iniciar'}
+        </button>
+        <button
+          onClick={() => onReset(25 * 60)}
+          className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        >
+          Reiniciar
+        </button>
+      </div>
+      <div className="mt-4 w-full max-w-xs">
+        <label className="block text-sm font-medium mb-1">Ajustar tiempo (minutos)</label>
+        <input
+          type="range"
+          min="1"
+          max="60"
+          value={customTime}
+          onChange={handleTimeChange}
+          disabled={isRunning}
+          className="w-full"
+        />
+        <span className="text-sm">{customTime} minutos</span>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tasks, setTasks] = React.useState(() => {
+    const savedTasks = localStorage.getItem('tasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+  const [timer, setTimer] = React.useState(25 * 60);
+  const [isRunning, setIsRunning] = React.useState(false);
+  const [streak, setStreak] = React.useState(() => {
+    return parseInt(localStorage.getItem('streak')) || 0;
+  });
+  const [coins, setCoins] = React.useState(() => {
+    return parseInt(localStorage.getItem('coins')) || 0;
+  });
+  const [theme, setTheme] = React.useState('light');
+  const [achievements, setAchievements] = React.useState([]);
+  const [currentAchievement, setCurrentAchievement] = React.useState(null);
+  const [showMindfulness, setShowMindfulness] = React.useState(false);
+  const [showTimer, setShowTimer] = React.useState(true);
+  const [currentUser, setCurrentUser] = React.useState(() => {
+    return localStorage.getItem('currentUser');
+  });
+  const [showSettings, setShowSettings] = React.useState(false);
+
+  const [taskCategories] = React.useState([
+    { 
+      id: 'priority', 
+      name: 'Tareas Prioritarias (80/20)', 
+      icon: '🎯',
+      description: 'Enfócate en el 20% de tareas que generan el 80% de resultados',
+      color: 'from-indigo-500 to-purple-500'
+    },
+    { 
+      id: 'parkinson', 
+      name: 'Plazos Cortos (Ley de Parkinson)', 
+      icon: '⏰',
+      description: 'Establece plazos ajustados para maximizar la eficiencia',
+      color: 'from-green-500 to-emerald-500'
+    },
+    { 
+      id: 'frog', 
+      name: 'Desafiantes (Eat the Frog)', 
+      icon: '🐸',
+      description: 'Comienza el día con tu tarea más difícil',
+      color: 'from-orange-500 to-yellow-500'
+    }
+  ]);
+
+  const [showTaskForm, setShowTaskForm] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = React.useState(null);
+  const [showTutorial, setShowTutorial] = React.useState(() => {
+    return !localStorage.getItem('tutorialCompleted');
+  });
+
+  const handleLogin = (username) => {
+    setCurrentUser(username);
+    localStorage.setItem('currentUser', username);
+    const userData = JSON.parse(localStorage.getItem(`user_${username}`));
+    setTasks(userData.tasks || []);
+    setStreak(userData.streak || 0);
+    setCoins(userData.coins || 0);
+    setAchievements(userData.achievements || []);
+    setTheme(userData.theme || 'light');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+    setTasks([]);
+    setStreak(0);
+    setCoins(0);
+    setAchievements([]);
+  };
+
+  const resetProgress = () => {
+    const newState = {...DEFAULT_USER_STATE};
+    localStorage.setItem(`user_${currentUser}`, JSON.stringify(newState));
+    setTasks(newState.tasks);
+    setStreak(newState.streak);
+    setCoins(newState.coins);
+    setAchievements(newState.achievements);
+    setShowSettings(false);
+  };
+
+  React.useEffect(() => {
+    if (currentUser) {
+      const userData = {
+        tasks,
+        streak,
+        coins,
+        achievements,
+        theme,
+        tutorialCompleted: !showTutorial
+      };
+      localStorage.setItem(`user_${currentUser}`, JSON.stringify(userData));
+    }
+  }, [tasks, streak, coins, achievements, theme, showTutorial, currentUser]);
+
+  React.useEffect(() => {
+    let interval = null;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setTimer((timer) => {
+          if (timer <= 1) {
+            clearInterval(interval);
+            celebrateCompletion();
+            setShowMindfulness(true);
+            return 0;
+          }
+          return timer - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  const addTask = (taskData) => {
+    const newTask = {
+      id: Date.now(),
+      title: taskData.title,
+      category: taskData.category,
+      completed: false,
+      createdAt: new Date().toISOString()
+    };
+    setTasks([...tasks, newTask]);
+  };
+
+  const completeTask = (taskId) => {
+    setTasks(prevTasks => {
+      const newTasks = prevTasks.map(task => 
+        task.id === taskId ? {...task, completed: true, completedAt: new Date().toISOString()} : task
+      );
+      
+      localStorage.setItem('tasks', JSON.stringify(newTasks));
+      
+      const message = MOTIVATION_MESSAGES[Math.floor(Math.random() * MOTIVATION_MESSAGES.length)];
+      
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-lg shadow-lg z-50 achievement-unlock';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+      
+      celebrateCompletion();
+      return newTasks;
+    });
+  };
+
+  const celebrateCompletion = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    setCoins(coins => coins + 10);
+    setStreak(streak => streak + 1);
+    checkAchievements();
+  };
+
+  const checkAchievements = () => {
+    if (streak === 7 && !achievements.includes(ACHIEVEMENTS.STREAK_7.id)) {
+      unlockAchievement(ACHIEVEMENTS.STREAK_7);
+    }
+  };
+
+  const unlockAchievement = (achievement) => {
+    setAchievements([...achievements, achievement.id]);
+    setCurrentAchievement(achievement);
+    confetti({
+      particleCount: 150,
+      spread: 90,
+      origin: { y: 0.5 }
+    });
+    setTimeout(() => setCurrentAchievement(null), 3000);
+  };
+
+  const completeTutorial = () => {
+    localStorage.setItem('tutorialCompleted', 'true');
+    setShowTutorial(false);
+  };
+
+  React.useEffect(() => {
+    const lastLoginDate = localStorage.getItem('lastLoginDate');
+    const today = new Date().toDateString();
+    
+    if (lastLoginDate !== today) {
+      if (lastLoginDate === new Date(Date.now() - 86400000).toDateString()) {
+        setStreak(streak => streak + 1);
+      } else {
+        setStreak(0);
+      }
+      localStorage.setItem('lastLoginDate', today);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.documentElement.classList.toggle('dark');
+  };
+
+  if (!currentUser) {
+    return <UserAuth onLogin={handleLogin} />;
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {showTutorial && <Tutorial onComplete={completeTutorial} />}
+      {showSettings && (
+        <UserSettings
+          currentUser={currentUser}
+          onReset={resetProgress}
+          onLogout={handleLogout}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold text-primary">
+          TaskMaster Pro
+        </h1>
+        <div className="flex items-center space-x-4">
+          <div className="text-2xl">
+            <span className="mr-2">🪙</span>
+            {coins}
+          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg bg-button hover:opacity-90"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            👤 {currentUser}
+          </button>
+        </div>
+      </header>
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setShowTimer(!showTimer)}
+          className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-opacity-90 transition-colors"
+        >
+          {showTimer ? 'Ocultar Timer' : 'Mostrar Timer'}
+        </button>
+      </div>
+
+      {showTimer && (
+        <div className="mb-8">
+          <Timer 
+            time={timer}
+            isRunning={isRunning}
+            onToggle={() => setIsRunning(!isRunning)}
+            onReset={(newTime) => {
+              setTimer(newTime);
+              setIsRunning(false);
+            }}
+          />
+        </div>
+      )}
+
+      {showMindfulness && (
+        <MindfulnessPrompt 
+          onClose={() => setShowMindfulness(false)} 
+        />
+      )}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {taskCategories.map(category => (
+          <div key={category.id} className="task-card">
+            {showTaskForm && selectedCategory === category.id && (
+              <TaskForm
+                category={category.id}
+                onSubmit={addTask}
+                onClose={() => setShowTaskForm(false)}
+              />
+            )}
+            <TaskList
+              category={category.id}
+              tasks={tasks.filter(t => t.category === category.id)}
+              onTaskComplete={completeTask}
+              taskCategories={taskCategories}
+            />
+            <button
+              onClick={() => {
+                setSelectedCategory(category.id);
+                setShowTaskForm(true);
+              }}
+              className="mt-4 w-full py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+            >
+              + Añadir tarea
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <Analytics 
+        tasks={tasks} 
+        taskCategories={taskCategories} 
+      />
+      
+      {currentAchievement && (
+        <AchievementPopup 
+          achievement={currentAchievement} 
+          onClose={() => setCurrentAchievement(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('app'));
+</script>
+
+</body></html>
